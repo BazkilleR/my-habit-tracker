@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Habit Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+
+    <header class="app-header">
+      <span class="header-icon">✨</span>
+      <h1 class="app-title">Habit Tracker</h1>
+      <p class="app-subtitle">Build better habits, one day at a time</p>
+    </header>
+
+    <!-- Tab switcher -->
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="today" role="tab" aria-selected="true">Today</button>
+      <button class="tab"        data-tab="calendar" role="tab" aria-selected="false">Calendar</button>
+    </div>
+
+    <!-- ── Today view ───────────────────────────────────────────────────────── -->
+    <div id="todayView" class="tab-view" role="tabpanel">
+
+      <section class="input-card">
+        <div class="input-wrapper">
+          <input
+            type="text"
+            id="habitInput"
+            class="habit-input"
+            placeholder="e.g. Morning run, Read 20 pages…"
+            maxlength="60"
+            autocomplete="off"
+          />
+          <button id="addBtn" class="add-btn">
+            <span class="btn-plus">+</span>
+            <span>Add</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="habits-card">
+        <div class="habits-header">
+          <h2 class="habits-title">My Habits</h2>
+          <span class="habits-badge" id="habitsBadge">0 habits</span>
+        </div>
+        <ul class="habits-list" id="habitsList"></ul>
+      </section>
+
+    </div>
+
+    <!-- ── Calendar view ────────────────────────────────────────────────────── -->
+    <div id="calendarView" class="tab-view hidden" role="tabpanel">
+
+      <section class="calendar-card">
+
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="prevMonth" aria-label="Previous month">&#8249;</button>
+          <h2 class="cal-month-label" id="calMonthLabel"></h2>
+          <button class="cal-nav-btn" id="nextMonth" aria-label="Next month">&#8250;</button>
+        </div>
+
+        <div class="cal-legend">
+          <span class="legend-item"><span class="dot dot-green"></span>All done</span>
+          <span class="legend-item"><span class="dot dot-yellow"></span>Partial</span>
+          <span class="legend-item"><span class="dot dot-red"></span>Missed</span>
+        </div>
+
+        <div class="cal-day-headers" aria-hidden="true">
+          <span>Su</span><span>Mo</span><span>Tu</span>
+          <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+        </div>
+
+        <div class="cal-grid" id="calGrid"></div>
+
+      </section>
+
+    </div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

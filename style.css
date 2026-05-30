@@ -1,0 +1,650 @@
+/* ─── Design: Nocturne ───────────────────────────────────────────────────────
+   Typography  : Playfair Display (display) + Sora (UI)
+   Accent      : Warm gold — a deliberate departure from blue/purple defaults
+   Surfaces    : Deep indigo-black hierarchy
+   Signature   : Dark text on gold buttons (luxury inversion)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: dark;
+
+  /* Gold system */
+  --gold:       #C8872A;
+  --gold-hi:    #E8A84A;
+  --gold-text:  #F2C97A;
+  --gold-glow:  rgba(200, 135, 42, 0.24);
+  --gold-border: rgba(200, 135, 42, 0.20);
+
+  /* Surface hierarchy */
+  --bg:        #090910;
+  --surface:   #0F0F1A;
+  --surface-2: #171724;
+  --surface-3: #20202F;
+
+  /* Borders */
+  --border:    rgba(255, 255, 255, 0.06);
+  --border-hi: rgba(255, 255, 255, 0.12);
+
+  /* Text — warm cast to match gold */
+  --text:   #EDE8DF;
+  --text-2: #7C7789;
+  --text-3: #3D3A48;
+  --ink:    #0C0B08;   /* dark ink — used on gold surfaces */
+  --white:  #FFFFFF;
+
+  /* Shadows */
+  --shadow-card:  0 1px 3px rgba(0,0,0,0.65), 0 0 0 1px var(--border);
+  --shadow-hover: 0 12px 44px rgba(0,0,0,0.72), 0 0 0 1px var(--gold-border);
+  --shadow-gold:  0 0 30px var(--gold-glow), 0 4px 18px rgba(0,0,0,0.55);
+
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm:  8px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition: 0.18s ease;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ul     { list-style: none; }
+button { cursor: pointer; font-family: inherit; }
+input  { font-family: inherit; }
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar               { width: 4px; }
+::-webkit-scrollbar-track         { background: transparent; }
+::-webkit-scrollbar-thumb         { background: var(--surface-3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover   { background: var(--gold-border); }
+
+/* ─── Film grain overlay (page-wide) ────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.80' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='320' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: 0.028;
+}
+
+/* ─── Body ──────────────────────────────────────────────────────────────── */
+body {
+  font-family: 'Sora', -apple-system, sans-serif;
+  background: var(--bg);
+  background-image:
+    radial-gradient(ellipse 55% 30% at 50% 0%, rgba(200, 135, 42, 0.05) 0%, transparent 100%);
+  min-height: 100vh;
+  padding: 36px 16px 80px;
+  color: var(--text);
+}
+
+/* ─── Layout ────────────────────────────────────────────────────────────── */
+.app-container {
+  max-width: 620px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ─── Staggered page-load entrance ──────────────────────────────────────── */
+.app-header { animation: riseUp 0.65s var(--ease-out-expo) 0.00s both; }
+.tabs       { animation: riseUp 0.65s var(--ease-out-expo) 0.08s both; }
+.tab-view   { animation: riseUp 0.65s var(--ease-out-expo) 0.15s both; }
+
+@keyframes riseUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Header ────────────────────────────────────────────────────────────── */
+.app-header {
+  background:
+    radial-gradient(ellipse 90% 65% at 50% -5%, rgba(200, 135, 42, 0.07) 0%, transparent 55%),
+    linear-gradient(180deg, #16152A 0%, #0E0E1C 100%);
+  border: 1px solid var(--gold-border);
+  border-radius: var(--radius-lg);
+  padding: 52px 32px 46px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Gold ruled top line — slow shimmer crawl */
+.app-header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold)    20%,
+    var(--gold-hi) 50%,
+    var(--gold)    80%,
+    transparent 100%);
+  background-size: 200% 100%;
+  animation: goldShimmer 5s ease-in-out infinite;
+}
+
+/* Bottom ruled line — double rule for editorial feel */
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-border), transparent);
+}
+
+.header-icon {
+  display: block;
+  font-size: 48px;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 22px rgba(200, 135, 42, 0.65));
+}
+
+/* Playfair Display — the signature design choice */
+.app-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--gold-text);
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+  line-height: 1.15;
+}
+
+.app-subtitle {
+  font-size: 0.85rem;
+  font-weight: 300;
+  color: var(--text-2);
+  letter-spacing: 0.3px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Tabs ───────────────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 5px;
+  gap: 5px;
+  box-shadow: var(--shadow-card);
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-2);
+  background: transparent;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+/* Dark ink on gold — the luxury inversion */
+.tab.active {
+  background: var(--gold);
+  color: var(--ink);
+  box-shadow: 0 0 24px var(--gold-glow), 0 2px 10px rgba(0,0,0,0.45);
+  letter-spacing: 0.4px;
+}
+
+.tab:not(.active):hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+/* ─── Tab views ──────────────────────────────────────────────────────────── */
+.tab-view        { display: flex; flex-direction: column; gap: 14px; }
+.tab-view.hidden { display: none; }
+
+/* ─── Input Card ─────────────────────────────────────────────────────────── */
+.input-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-card);
+}
+
+.input-wrapper { display: flex; gap: 10px; }
+
+.habit-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--surface-2);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+}
+
+.habit-input::placeholder { color: var(--text-3); }
+
+.habit-input:focus {
+  border-color: var(--gold);
+  background: var(--surface-2);
+  box-shadow: 0 0 0 3px rgba(200, 135, 42, 0.12);
+}
+
+.habit-input.shake { animation: shake 0.38s ease; }
+
+/* Gold button with dark ink text — distinctive */
+.add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 22px;
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Sora', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-gold);
+  transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+  white-space: nowrap;
+}
+
+.add-btn:hover {
+  background: var(--gold-hi);
+  transform: translateY(-1px);
+  box-shadow: 0 0 40px rgba(232, 168, 74, 0.45), 0 6px 22px rgba(0,0,0,0.55);
+}
+
+.add-btn:active { transform: translateY(0); }
+
+.btn-plus { font-size: 1.2rem; font-weight: 300; line-height: 1; }
+
+/* ─── Habits Card ────────────────────────────────────────────────────────── */
+.habits-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-card);
+}
+
+.habits-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.habits-title {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.habits-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--gold-text);
+  background: rgba(200, 135, 42, 0.10);
+  border: 1px solid var(--gold-border);
+  padding: 3px 11px;
+  border-radius: 99px;
+  letter-spacing: 0.2px;
+}
+
+/* ─── Habits List ────────────────────────────────────────────────────────── */
+.habits-list { display: flex; flex-direction: column; gap: 8px; }
+
+/* ─── Habit item stagger ─────────────────────────────────────────────────── */
+.habits-list .habit-item:nth-child(1) { animation-delay: 0.00s; }
+.habits-list .habit-item:nth-child(2) { animation-delay: 0.05s; }
+.habits-list .habit-item:nth-child(3) { animation-delay: 0.10s; }
+.habits-list .habit-item:nth-child(4) { animation-delay: 0.15s; }
+.habits-list .habit-item:nth-child(5) { animation-delay: 0.20s; }
+.habits-list .habit-item:nth-child(n+6) { animation-delay: 0.24s; }
+
+/* ─── Empty State ────────────────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 56px 16px;
+  color: var(--text-3);
+  font-size: 0.83rem;
+  font-weight: 300;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+.empty-icon { font-size: 36px; opacity: 0.5; }
+
+/* ─── Habit Item ─────────────────────────────────────────────────────────── */
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 13px 15px;
+  border-radius: var(--radius-md);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+    0 3px 12px rgba(0, 0, 0, 0.55);
+  transition: transform var(--transition), box-shadow var(--transition);
+  animation: itemIn 0.4s var(--ease-out-expo) both;
+}
+
+/* Light-sweep shimmer on hover */
+.habit-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.09),
+    transparent
+  );
+  transform: skewX(-18deg);
+  transition: left 0.65s var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.habit-item:hover::before { left: 130%; }
+
+.habit-item:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.30),
+    0 0 0 1px rgba(255, 255, 255, 0.07),
+    0 18px 48px rgba(0, 0, 0, 0.70);
+}
+
+.habit-item:active { transform: translateY(0) scale(0.99); }
+
+@keyframes itemIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Custom Checkbox ───────────────────────────────────────────────────── */
+.habit-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 19px; height: 19px;
+  flex-shrink: 0;
+  border: 1.5px solid rgba(255, 255, 255, 0.38);
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.habit-checkbox:checked {
+  background: rgba(255, 255, 255, 0.20);
+  border-color: rgba(255, 255, 255, 0.80);
+}
+
+.habit-checkbox:checked::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpolyline points='1,5 4.5,8.5 11,1' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 11px no-repeat;
+}
+
+/* ─── Habit Content ──────────────────────────────────────────────────────── */
+.habit-emoji { font-size: 1.2rem; flex-shrink: 0; line-height: 1; }
+
+.habit-name {
+  flex: 1;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: break-word;
+  transition: opacity var(--transition);
+  letter-spacing: 0.1px;
+}
+
+.habit-item.completed .habit-name {
+  text-decoration: line-through;
+  opacity: 0.38;
+}
+
+/* ─── Delete Button ──────────────────────────────────────────────────────── */
+.delete-btn {
+  flex-shrink: 0;
+  width: 25px; height: 25px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition), background var(--transition), color var(--transition);
+}
+
+.habit-item:hover .delete-btn { opacity: 1; }
+.delete-btn:hover { background: rgba(255,255,255,0.22); color: var(--white); }
+
+/* ─── Calendar Card ──────────────────────────────────────────────────────── */
+.calendar-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 26px 22px 32px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Navigation */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.cal-month-label {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--gold-text);
+  letter-spacing: 0.1px;
+}
+
+.cal-nav-btn {
+  width: 32px; height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.cal-nav-btn:hover {
+  background: var(--surface-3);
+  border-color: var(--gold-border);
+  color: var(--gold-text);
+}
+
+/* Legend */
+.cal-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 11px 0;
+  margin-bottom: 18px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* Day headers */
+.cal-day-headers {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.cal-day-headers span {
+  text-align: center;
+  font-size: 0.63rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  padding: 6px 0;
+}
+
+/* Calendar grid */
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 8px 2px;
+  min-height: 54px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition);
+}
+
+.cal-cell.empty { pointer-events: none; }
+
+.cal-cell:not(.empty):not(.future):not(.today):hover {
+  background: var(--surface-2);
+}
+
+.cal-day-num {
+  font-family: 'Sora', sans-serif;
+  font-size: 0.80rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1;
+}
+
+.cal-cell.future .cal-day-num { color: var(--text-3); }
+
+/* Today — gold cell with dark ink number, breathing glow */
+.cal-cell.today {
+  background: var(--gold);
+  animation: todayGlow 2.8s ease-in-out infinite;
+}
+
+.cal-cell.today .cal-day-num {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+/* ─── Status Dots ────────────────────────────────────────────────────────── */
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+/* Brighter — they need to read on dark surface and on gold cell */
+.dot-green  { background: #4ADE80; box-shadow: 0 0 5px rgba(74, 222, 128, 0.55); }
+.dot-yellow { background: #FACC15; box-shadow: 0 0 5px rgba(250, 204, 21,  0.55); }
+.dot-red    { background: #F87171; box-shadow: 0 0 5px rgba(248, 113, 113, 0.55); }
+
+.cal-cell.today .dot { width: 7px; height: 7px; }
+/* Dots on gold cell need dark shadow instead of colored glow */
+.cal-cell.today .dot-green  { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.cal-cell.today .dot-yellow { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.cal-cell.today .dot-red    { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes goldShimmer {
+  0%   { background-position: 100% center; opacity: 0.7; }
+  50%  { background-position:   0% center; opacity: 1.0; }
+  100% { background-position: 100% center; opacity: 0.7; }
+}
+
+@keyframes todayGlow {
+  0%, 100% { box-shadow: 0 0 14px var(--gold-glow); }
+  50%       { box-shadow: 0 0 30px rgba(200, 135, 42, 0.50), 0 0 8px rgba(232,168,74,0.30); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideOut {
+  to { opacity: 0; transform: translateX(14px); max-height: 0; padding: 0; margin: 0; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .app-header    { padding: 36px 20px 32px; }
+  .app-title     { font-size: 1.75rem; }
+  .input-wrapper { flex-direction: column; }
+  .add-btn       { justify-content: center; }
+  .cal-cell      { min-height: 44px; padding: 5px 1px; }
+  .cal-day-num   { font-size: 0.72rem; }
+  .dot           { width: 5px; height: 5px; }
+}
