@@ -114,6 +114,14 @@ function getDotStatus(dateStr) {
   return 'yellow';
 }
 
+// Returns { done, total, pct } for a given date string (pct is 0–1).
+function getCompletionData(dateStr) {
+  const active = habits.filter(h => h.createdAt <= dateStr);
+  if (active.length === 0) return { done: 0, total: 0, pct: 0 };
+  const done = active.filter(h => !!h.completions[dateStr]).length;
+  return { done, total: active.length, pct: done / active.length };
+}
+
 // ─── Badge ────────────────────────────────────────────────────────────────────
 function updateBadge() {
   const today = todayStr();
@@ -254,18 +262,30 @@ function renderCalendar() {
     const cell = document.createElement('div');
     cell.className = `cal-cell${isToday ? ' today' : ''}${isFuture ? ' future' : ''}`;
 
-    const num = document.createElement('span');
-    num.className   = 'cal-day-num';
-    num.textContent = day;
-    cell.appendChild(num);
-
     if (!isFuture) {
-      const status = getDotStatus(dateStr);
-      if (status) {
-        const dot = document.createElement('span');
-        dot.className = `dot dot-${status}`;
-        cell.appendChild(dot);
+      // Today or past day — circular progress ring
+      const { pct, total } = getCompletionData(dateStr);
+      const CIRC = 75.4; // 2π × r(12)
+      const dashOffset = (CIRC * (1 - pct)).toFixed(2);
+
+      let progressCircle = '';
+      if (total > 0 && pct > 0) {
+        // On the gold today-cell, yellow is unreadable — use dark ink instead
+        const color = pct >= 1 ? '#4ADE80' : (isToday ? 'rgba(12,11,8,0.70)' : '#FACC15');
+        progressCircle = `<circle cx="16" cy="16" r="12" class="ring-progress" stroke="${color}" stroke-dasharray="${CIRC}" stroke-dashoffset="${dashOffset}"/>`;
       }
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'ring-wrapper';
+      wrapper.innerHTML = `<svg class="ring-svg" viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" class="ring-track"/>${progressCircle}</svg><span class="cal-day-num">${day}</span>`;
+      cell.appendChild(wrapper);
+
+    } else {
+      // Future — just the dimmed number
+      const num = document.createElement('span');
+      num.className   = 'cal-day-num';
+      num.textContent = day;
+      cell.appendChild(num);
     }
 
     grid.appendChild(cell);

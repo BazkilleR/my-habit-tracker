@@ -609,6 +609,44 @@ body {
 .cal-cell.today .dot-yellow { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
 .cal-cell.today .dot-red    { box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
 
+/* ─── Circular Progress Ring (past calendar days) ───────────────────────── */
+.ring-wrapper {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 34px; height: 34px;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
+.ring-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.10);
+  stroke-width: 2.5;
+}
+
+.ring-progress {
+  fill: none;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.ring-wrapper .cal-day-num {
+  position: relative;
+  z-index: 1;
+  font-size: 0.73rem;
+}
+
+.cal-cell.today .ring-track { stroke: rgba(0, 0, 0, 0.20); }
+
 /* ─── Animations ─────────────────────────────────────────────────────────── */
 @keyframes goldShimmer {
   0%   { background-position: 100% center; opacity: 0.7; }
@@ -647,4 +685,7 @@ body {
   .cal-cell      { min-height: 44px; padding: 5px 1px; }
   .cal-day-num   { font-size: 0.72rem; }
   .dot           { width: 5px; height: 5px; }
+  .ring-wrapper  { width: 28px; height: 28px; }
+  .ring-svg      { width: 28px; height: 28px; }
+  .ring-wrapper .cal-day-num { font-size: 0.63rem; }
 }
